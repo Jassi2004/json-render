@@ -3407,9 +3407,9 @@
       "title": "Skills",
       "metadataTitle": "Skills | json-render",
       "prefix": "import { pageMetadata } from \"@/lib/page-metadata\";\n\nexport const metadata = pageMetadata(\"docs/skills\");\n\n# Skills\n",
-      "sourceSha256": "e42a91ef21f7ef975c8deb847c98fd58ce254d24e87d3e9a7940ca4fb177baf1",
-      "bodySha256": "5cc03b937129b9ea9870ed88693cea3caa2e527efdea75a75e68deac72bfa6d9",
-      "markdownSha256": "2ab0dd06dea702b9e1770ec6c1791229df5c6fc4e7887498249644d762e8accd",
+      "sourceSha256": "27238d43649da196ac6e27f4abbcd5d008b6f20bc8a96fdf4126ccb51f81d8f6",
+      "bodySha256": "4586974cd1f61c0fbdf5ef4f3e57b881847239a6f64af37fb1dbc8550143cf11",
+      "markdownSha256": "24cca000daaecc74914a3fe20a492a230b425457b9d01980b0da9957c92b3357",
       "headings": [
         {
           "title": "Available Skills",
