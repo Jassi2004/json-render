@@ -1699,9 +1699,9 @@
       "title": "@json-render/solid",
       "metadataTitle": "@json-render/solid API | json-render",
       "prefix": "import { pageMetadata } from \"@/lib/page-metadata\";\nexport const metadata = pageMetadata(\"docs/api/solid\");\n\n# @json-render/solid\n",
-      "sourceSha256": "1efd8c84c9840a7ab9dba2f2e6ccde4923910c11c34b5a7e8abe7b218ddb057a",
-      "bodySha256": "9a3e72fe0df40bda69fcaf50478fc944f38e12029bb1fe5ecb6ab5c66feb1b4c",
-      "markdownSha256": "383082dd3154a0294e33ace4bd85b84d9ec65fd58ae8324c789cc977af112a12",
+      "sourceSha256": "06096f609fecadb661161f916022729a69e3e795778b47d2ad4c35c43ba90382",
+      "bodySha256": "85d432c81f3724465451a9634ac00345846a3517f84ed528bfbd6ea118be6ebe",
+      "markdownSha256": "48f9b3b85023d46fdc2e3b6bb73edbad42d5709b4e37266fe26a48bd29e1a4d3",
       "headings": [
         {
           "title": "Installation",

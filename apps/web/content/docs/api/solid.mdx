@@ -119,7 +119,7 @@ const { registry, handlers, executeAction } = defineRegistry(catalog, {
     Card: (renderProps) => <div>{renderProps.children}</div>,
     Button: (renderProps) => (
       <button onClick={() => renderProps.emit("press")}>
-        {renderProps.element.props.label as string}
+        {renderProps.props.label}
       </button>
     ),
   },
