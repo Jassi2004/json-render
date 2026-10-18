@@ -963,9 +963,9 @@
       "title": "@json-render/next",
       "metadataTitle": "@json-render/next API | json-render",
       "prefix": "import { pageMetadata } from \"@/lib/page-metadata\"\nexport const metadata = pageMetadata(\"docs/api/next\")\n\n# @json-render/next\n",
-      "sourceSha256": "fcb2b5aac8a6849e3c744d008eca96e196f68683dd0e7b35a8fa3b405561e5cd",
-      "bodySha256": "47e1c83be544eb7fcfa821721f4068c04bab23a17ef2fc52066378eef018967d",
-      "markdownSha256": "5ebc68fd21f16599a5b5331013af4c8ba00f0461b1ce03ac047589d2a84f6d19",
+      "sourceSha256": "f777b71ce9db425550cfdbb90ae852a27b39b4317b426439456d906cbb3f07aa",
+      "bodySha256": "2da82c125e93cec959f972a42c60d79930d241abea43d50cc183aa1c3df78de3",
+      "markdownSha256": "9f77b59616438bdacfb2559e96492def8181a9c66b87f38ca669e1817187b9fe",
       "headings": [
         {
           "title": "Installation",

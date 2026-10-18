@@ -13,9 +13,10 @@ npm install @json-render/core @json-render/react @json-render/next
 ### 1. Define your application spec
 
 ```typescript
+// lib/spec.ts
 import type { NextAppSpec } from "@json-render/next";
 
-const spec: NextAppSpec = {
+export const spec: NextAppSpec = {
   metadata: {
     title: { default: "My App", template: "%s | My App" },
   },
@@ -49,30 +50,67 @@ const spec: NextAppSpec = {
 ```typescript
 // lib/app.ts
 import { createNextApp } from "@json-render/next/server";
+import { spec } from "./spec";
 
-export const { Page, generateMetadata, generateStaticParams } = createNextApp({ spec });
+export const { getPageData, generateMetadata, generateStaticParams } =
+  createNextApp({ spec });
 ```
 
 ### 3. Wire up Next.js routes
 
 ```tsx
 // app/[[...slug]]/page.tsx
-export { Page as default, generateMetadata, generateStaticParams } from "@/lib/app";
+import { notFound } from "next/navigation";
+import { getPageData, generateMetadata, generateStaticParams } from "@/lib/app";
+import { SiteRenderer } from "./renderer";
+
+export { generateMetadata, generateStaticParams };
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const data = await getPageData({ params });
+  if (!data) notFound();
+  return <SiteRenderer {...data} />;
+}
 ```
 
+The component registry and action handlers contain functions, so import them inside a Client Component instead of passing them from the server.
+
 ```tsx
-// app/[[...slug]]/layout.tsx
-import { NextAppProvider } from "@json-render/next";
+// app/[[...slug]]/renderer.tsx
+"use client";
+
+import {
+  NextAppProvider,
+  PageRenderer,
+  type PageRendererProps,
+} from "@json-render/next";
 import { registry, handlers } from "@/lib/registry";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export function SiteRenderer(props: PageRendererProps) {
+  return (
+    <NextAppProvider registry={registry} handlers={handlers}>
+      <PageRenderer {...props} />
+    </NextAppProvider>
+  );
+}
+```
+
+The examples assume `lib/registry.tsx` exports your `registry` and `handlers`. Register the component types used by the spec (`Container`, `NavBar`, and `Card`); `PageRenderer` supplies `Slot` automatically. If you do not have custom action handlers, omit `handlers` from the import and provider.
+
+Keep the document shell in the root layout:
+
+```tsx
+// app/layout.tsx
+import type { ReactNode } from "react";
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <NextAppProvider registry={registry} handlers={handlers}>
-          {children}
-        </NextAppProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

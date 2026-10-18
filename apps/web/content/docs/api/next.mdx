@@ -36,12 +36,12 @@ const catalog = defineCatalog(schema, {
 
 ## createNextApp
 
-Create all exports needed for a Next.js `[[...slug]]` catch-all route.
+Create the server-side helpers for a Next.js `[[...slug]]` catch-all route. Define the page component separately using `getPageData`.
 
 ```typescript
 import { createNextApp } from '@json-render/next/server';
 
-const { Page, generateMetadata, generateStaticParams } = createNextApp({
+const { getPageData, generateMetadata, generateStaticParams } = createNextApp({
   spec: myAppSpec,
   loaders: {
     loadPost: async ({ slug }) => {
@@ -87,8 +87,8 @@ const { Page, generateMetadata, generateStaticParams } = createNextApp({
   </thead>
   <tbody>
     <tr>
-      <td><code>Page</code></td>
-      <td>Async Server Component for <code>page.tsx</code></td>
+      <td><code>getPageData</code></td>
+      <td>Resolves page data for route params; returns <code>null</code> when no route matches</td>
     </tr>
     <tr>
       <td><code>generateMetadata</code></td>
@@ -100,6 +100,50 @@ const { Page, generateMetadata, generateStaticParams } = createNextApp({
     </tr>
   </tbody>
 </table>
+
+Call `getPageData` from a Server Component, and keep the registry and handlers in a client renderer:
+
+```tsx
+// app/[[...slug]]/page.tsx
+import { notFound } from "next/navigation";
+import { getPageData, generateMetadata, generateStaticParams } from "@/lib/app";
+import { SiteRenderer } from "./renderer";
+
+export { generateMetadata, generateStaticParams };
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const data = await getPageData({ params });
+  if (!data) notFound();
+  return <SiteRenderer {...data} />;
+}
+```
+
+The component registry and action handlers contain functions, so import them inside a Client Component instead of passing them from the server.
+
+```tsx
+// app/[[...slug]]/renderer.tsx
+"use client";
+
+import {
+  NextAppProvider,
+  PageRenderer,
+  type PageRendererProps,
+} from "@json-render/next";
+import { registry, handlers } from "@/lib/registry";
+
+export function SiteRenderer(props: PageRendererProps) {
+  return (
+    <NextAppProvider registry={registry} handlers={handlers}>
+      <PageRenderer {...props} />
+    </NextAppProvider>
+  );
+}
+```
+
 
 ## NextAppSpec
 
@@ -160,6 +204,8 @@ Routes use Next.js URL conventions:
 Client component that provides the component registry and action handlers to all pages.
 
 ```tsx
+"use client";
+
 import { NextAppProvider } from '@json-render/next';
 
 export default function Layout({ children }) {

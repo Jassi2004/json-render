@@ -69,7 +69,7 @@ export const spec: NextAppSpec = {
 import { createNextApp } from "@json-render/next/server";
 import { spec } from "./spec";
 
-export const { Page, generateMetadata, generateStaticParams } = createNextApp({
+export const { getPageData, generateMetadata, generateStaticParams } = createNextApp({
   spec,
   loaders: {
     // Server-side data loaders (optional)
@@ -85,22 +85,57 @@ export const { Page, generateMetadata, generateStaticParams } = createNextApp({
 
 ```tsx
 // app/[[...slug]]/page.tsx
-export { Page as default, generateMetadata, generateStaticParams } from "@/lib/app";
+import { notFound } from "next/navigation";
+import { getPageData, generateMetadata, generateStaticParams } from "@/lib/app";
+import { SiteRenderer } from "./renderer";
+
+export { generateMetadata, generateStaticParams };
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const data = await getPageData({ params });
+  if (!data) notFound();
+  return <SiteRenderer {...data} />;
+}
 ```
 
+The component registry and action handlers contain functions, so import them inside a Client Component instead of passing them from the server.
+
 ```tsx
-// app/[[...slug]]/layout.tsx
-import { NextAppProvider } from "@json-render/next";
+// app/[[...slug]]/renderer.tsx
+"use client";
+
+import {
+  NextAppProvider,
+  PageRenderer,
+  type PageRendererProps,
+} from "@json-render/next";
 import { registry, handlers } from "@/lib/registry";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export function SiteRenderer(props: PageRendererProps) {
+  return (
+    <NextAppProvider registry={registry} handlers={handlers}>
+      <PageRenderer {...props} />
+    </NextAppProvider>
+  );
+}
+```
+
+The examples assume `lib/registry.tsx` exports your `registry` and `handlers`. Register the component types used by the spec (`Container`, `NavBar`, and `Card`); `PageRenderer` supplies `Slot` automatically. If you do not have custom action handlers, omit `handlers` from the import and provider.
+
+Keep the document shell in the root layout:
+
+```tsx
+// app/layout.tsx
+import type { ReactNode } from "react";
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <NextAppProvider registry={registry} handlers={handlers}>
-          {children}
-        </NextAppProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
@@ -161,12 +196,9 @@ createNextApp({
 
 ### SSR
 
-Pages are server-rendered automatically. The `createNextApp` `Page` component is an async Server Component that:
+Write an async Server Component that calls `getPageData({ params })`, handles a missing route with `notFound()`, and passes the returned data to a client renderer. `getPageData` matches the route, runs its server-side loader, and merges initial state. Next.js calls the separately exported `generateMetadata` and `generateStaticParams` helpers for SEO and static generation.
 
-1. Matches the route from the spec
-2. Runs server-side data loaders
-3. Generates metadata
-4. Passes the resolved spec to the client renderer for hydration
+The client renderer imports the registry and handlers locally, then renders `PageRenderer` inside `NextAppProvider`. Only the resolved page data crosses the server/client boundary.
 
 ### Entry Points
 
@@ -177,7 +209,7 @@ Pages are server-rendered automatically. The `createNextApp` `Page` component is
 
 ### Server Exports (`@json-render/next/server`)
 
-- `createNextApp(options)` -- Create Page, generateMetadata, generateStaticParams
+- `createNextApp(options)` -- Create getPageData, generateMetadata, generateStaticParams
 - `schema` -- Custom schema for Next.js apps (for AI catalog generation)
 - `matchRoute(spec, pathname)` -- Match a URL to a route spec
 - `resolveMetadata(spec, route)` -- Resolve metadata for a route
