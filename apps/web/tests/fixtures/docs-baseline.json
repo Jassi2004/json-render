@@ -467,9 +467,9 @@
       "title": "@json-render/devtools",
       "metadataTitle": "@json-render/devtools API | json-render",
       "prefix": "import { pageMetadata } from \"@/lib/page-metadata\"\nexport const metadata = pageMetadata(\"docs/api/devtools\")\n\n# @json-render/devtools\n",
-      "sourceSha256": "037aea395f97015e2fea6edf79f49afc6dfb763bd8b60673976c4ddadff5dd00",
-      "bodySha256": "e57b54b1f382bdac5506d58ed1b2fe188eba523258f7ecd9213cc7b8c1a044d6",
-      "markdownSha256": "ec0d311370659ac802c59cc87ffef1034e0c0a58902abc46e811a2cbc872940c",
+      "sourceSha256": "923cef62ad778655b84834ea09313c7cc3c27f42aebcad25c1282b8683f29b44",
+      "bodySha256": "508b00089d9d8de668a15fdaf2e5b862bab8eab7c48ef4e8d8f548ef3862c755",
+      "markdownSha256": "7dcbb767d5daa925672b6558b110a90cb68a39b465bd3c7165a0e175e6211d2b",
       "headings": [
         {
           "title": "Event Store",
